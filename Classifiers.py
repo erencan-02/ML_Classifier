@@ -99,11 +99,5 @@ classifiers = {
 
 
 
-data = pd.read_csv("heart_failure_clinical_records_dataset.csv") 
-clf = Classifier(classifiers['1'], data, 'DEATH_EVENT', test_size=0.001)
-clf.train()
-accuracy = clf.accuracy()
-print(accuracy)
-clf.plot()
 
 
