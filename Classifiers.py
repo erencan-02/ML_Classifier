@@ -4,15 +4,13 @@ from sklearn import preprocessing, neighbors
 from sklearn.model_selection import train_test_split
 
 
-#Plotting
+#Plot
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib as mpl
-#import seaborn as sns
-
-
-
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_moons, make_circles, make_classification
@@ -28,6 +26,8 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 
 
+
+#Classifier Overview
 classifiers = {
     '1': KNeighborsClassifier(3),
     '2': SVC(kernel="linear", C=0.025),
@@ -42,7 +42,7 @@ classifiers = {
 }
 
 
-class Classifier:
+class Model:
     def __init__(self, classifier, data_set, lable_name, *, test_size=0.5):
         self.classifier = classifier
 
@@ -51,13 +51,10 @@ class Classifier:
         else:
             self.data_set = pd.read_csv(data_set)
 
-            
         self.lable_name = lable_name
         self.test_size = test_size
-
         self.X = np.array(data_set)
         self.Y = np.array(data[lable_name])
-
         self.X_train, self.X_test, self.Y_train, self.Y_test = 4*[None] #train_test_split(X,y,test_size=0.1)
 
 
@@ -92,6 +89,21 @@ class Classifier:
         return results
 
 
+    def predict(self, *args):
+        lables = list(self.data_set.columns)
+        lables.remove(self.lable_name)
+
+        if len(lables) != len(args):
+            raise Exception('Invalid input: Please check if your input matches with the lables in your dataset')
+
+        _input = {lables[i] : args[i] for i in range(len(lables))}
+        example_measures = np.array( list(_input.values()) + [999])
+        example_measures = example_measures.reshape(1, -1)
+        prediction = self.classifier.predict(example_measures)
+
+        return prediction
+        
+
     def classifier_info(self):
         return 'You are using the {}'.format(type(self.classifier).__name__)
 
@@ -105,12 +117,11 @@ class Classifier:
 
 
 data = pd.read_csv("heart_failure_clinical_records_dataset.csv")
-clf = Classifier(classifiers['1'], data, 'DEATH_EVENT', test_size=0.9)
+model = Model(classifiers['1'], data, 'DEATH_EVENT', test_size=0.1)
 
 clf.train()
 accuracy = clf.accuracy()
-print(accuracy)
+
+prediction = clf.predict(0,0,0,0,0,0,0,0,0,0,0,0)
 
 clf.plot()
-
-
