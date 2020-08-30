@@ -28,12 +28,30 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 
 
+classifiers = {
+    '1': KNeighborsClassifier(3),
+    '2': SVC(kernel="linear", C=0.025),
+    '3': SVC(gamma=2, C=1),
+    '4': GaussianProcessClassifier(1.0 * RBF(1.0)),
+    '5': DecisionTreeClassifier(max_depth=5),
+    '6': RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+    '7': MLPClassifier(alpha=1, max_iter=1000),
+    '8': AdaBoostClassifier(),
+    '9': GaussianNB(),
+    '10': QuadraticDiscriminantAnalysis()
+}
 
 
 class Classifier:
     def __init__(self, classifier, data_set, lable_name, *, test_size=0.5):
         self.classifier = classifier
-        self.data_set = data_set
+
+        if isinstance(data_set, pd.core.frame.DataFrame):
+            self.data_set = data_set
+        else:
+            self.data_set = pd.read_csv(data_set)
+
+            
         self.lable_name = lable_name
         self.test_size = test_size
 
@@ -84,20 +102,15 @@ class Classifier:
 
 
     
-classifiers = {
-    '1': KNeighborsClassifier(3),
-    '2': SVC(kernel="linear", C=0.025),
-    '3': SVC(gamma=2, C=1),
-    '4': GaussianProcessClassifier(1.0 * RBF(1.0)),
-    '5': DecisionTreeClassifier(max_depth=5),
-    '6': RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-    '7': MLPClassifier(alpha=1, max_iter=1000),
-    '8': AdaBoostClassifier(),
-    '9': GaussianNB(),
-    '10': QuadraticDiscriminantAnalysis()
-}
 
 
+data = pd.read_csv("heart_failure_clinical_records_dataset.csv")
+clf = Classifier(classifiers['1'], data, 'DEATH_EVENT', test_size=0.9)
 
+clf.train()
+accuracy = clf.accuracy()
+print(accuracy)
+
+clf.plot()
 
 
